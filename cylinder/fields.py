@@ -4,14 +4,6 @@ from scipy import signal, optimize
 from scipy.special import jv, hankel1 as hv,jvp, h1vp as hvp
 from scipy.linalg import null_space
 
-# # Henkel function of first kind and derivatives
-# def jvp(l,z):
-#     return jv(l-1,z)-l*jv(l,z)/z
-# def hv(l,z):
-#     return jv(l,z)+1j*yv(l,z)
-# def hvp(l,z):
-#     return (jv(l-1,z)-l*jv(l,z)/z)+1j*(yv(l-1,z)-l*yv(l,z)/z)
-
 # One can set different material default glass and air
 def material(n_in=1.45,n_out=1):
     global n1; n1=n_in  # Refractive index or sqrt(ϵ₁) inside
@@ -82,7 +74,7 @@ def get_neff(rmin=0,rmax=2,N=1000):
     V=np.zeros([len(r0_per_λ0),4],dtype=complex)
     g=np.zeros_like(r0_per_λ0)
     for i in range(len(r0_per_λ0)):
-        tol=1e-4
+        tol=3e-4
         # print(np.shape(A(n[i],r0_per_λ0[i])))
         M=np.matrix(A(n[i],r0_per_λ0[i]))
         v=null_space(M,rcond=tol)
@@ -90,7 +82,8 @@ def get_neff(rmin=0,rmax=2,N=1000):
             V[i,:]=v[0]
             g[i]=1
         elif np.shape(v)==(4,2): #print('Two')
-            V[i,:]=v[:, 0]
+            ix=int(np.round(np.mean(np.argmin(v,axis=1))))
+            V[i,:]=v[:, ix]
             g[i]=1
         else: g[i]=np.nan
         # print(g)
@@ -109,22 +102,7 @@ def get_neff(rmin=0,rmax=2,N=1000):
     plt.legend()
     plt.show()
 
-    
-
-    #     # Calculates amplitudes
-    # V=np.zeros([len(r0_per_λ0),4],dtype=complex)
-    # W=np.zeros_like(r0_per_λ0,dtype=complex)
-    # for i in range(len(r0_per_λ0)):
-    #     (w,v)=np.linalg.eig(A(n[i],r0_per_λ0[i]))
-    #     W[i]=np.min(np.abs(w))
-    #     V[i,:]=v[np.argmin(np.abs(w))]
-
     return (r0_per_λ0,n,V)
-
-# def in_or_out(condition,success, fail):
-#     if condition: return success
-#     else: return fail
-# condition=np.vectorize(in_or_out)
 
 # E and H fields
 def E(V,n,r0_per_λ0,x_per_r0,y_per_r0,z_per_r0):
