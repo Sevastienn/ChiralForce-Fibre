@@ -2,7 +2,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import signal, optimize
 from scipy.special import jv, hankel1 as hv,jvp, h1vp as hvp
-from scipy.linalg import null_space
+
+# # Henkel function of first kind and derivatives
+# def jvp(l,z):
+#     return jv(l-1,z)-l*jv(l,z)/z
+# def hv(l,z):
+#     return jv(l,z)+1j*yv(l,z)
+# def hvp(l,z):
+#     return (jv(l-1,z)-l*jv(l,z)/z)+1j*(yv(l-1,z)-l*yv(l,z)/z)
 
 # One can set different material default glass and air
 def material(n_in=1.45,n_out=1):
@@ -96,11 +103,16 @@ def get_neff(rmin=0,rmax=2,N=1000,neff_fig=False,r0_over_λ0=None):
     # Plots n_eff
     if neff_fig:
         plt.pcolormesh(2*np.pi*Ro,Ne,-logdetM,cmap='Greys')
+        plt.colorbar(label=r'$-\log_{10}|\det{M}|$')
         plt.xlim(xmax=2*np.pi*rmax,xmin=rmin) 
         plt.plot(2*np.pi*r0_per_λ0,n,label=r'$n_\mathrm{eff}(k_0r_0)$')
-        # plt.plot(2*np.pi*r0_per_λ0,n*g,label=r'has eigenvector')
+        if r0_over_λ0 is None: 
+            pass
+        else:
+            idx=int(np.argwhere(r0_per_λ0==find_nearest(r0_per_λ0,r0_over_λ0)))
+            plt.scatter(2*np.pi*r0_per_λ0[idx],n[idx])
         plt.ylim(n2,n1)
-        plt.colorbar(label=r'$-\log_{10}|\det{M}|$')
+        
         plt.grid(color='black', linestyle='--')
         plt.ylabel(r'$n_\mathrm{eff}=\lambda_0/\lambda_z$')
         plt.xlabel(r'$k_0r_0=2\pi r_0/\lambda_0$')
@@ -121,11 +133,32 @@ def get_neff(rmin=0,rmax=2,N=1000,neff_fig=False,r0_over_λ0=None):
         return (r0_per_λ0,n,V)
     else:
         idx=int(np.argwhere(r0_per_λ0==find_nearest(r0_per_λ0,r0_over_λ0)))
+        print_matrix(M[idx])
+        eM=M[idx]
+        for i in range(4):
+            # print(np.inner(np.conj(eM[:,i]),eM[:,i]))
+            print_matrix(eM[:,i])
+            eM[:,i]=eM[:,i]/np.sqrt(np.inner(np.conj(eM[:,i]),eM[:,i]))
+            print_matrix(eM[:,i])
+            # print(np.inner(np.conj(eM[:,i]),eM[:,i]))
+        print_matrix(eM)
+        # print(print(np.inner(np.conj(eM[:,0]),eM[:,0])))
+        # (w,v)=np.linalg.eig(M)
+        # argus=np.argmin(np.abs(w),axis=1)
+        # W=w[np.arange(N),argus]
+        # V=v[np.arange(N),:,argus]
+        # print_matrix(M[idx])
+        # print(np.inner(np.conj(M[idx,:,0]),M[idx,:,0]))
+        # print(np.inner(np.conj(M[idx,:,1]),M[idx,:,1]))
+        # print(np.inner(np.conj(M[idx,:,2]),M[idx,:,2]))
+        # print(np.inner(np.conj(M[idx,:,3]),M[idx,:,3]))
         return (r0_per_λ0[idx],n[idx],V[idx])
 
-def get_E(x,y,z,λ0,r0,n_in=1.45,n_out=1):
+def get_E(x,y,z,λ0,r0,n_in=1.45,n_out=1,neff_fig=False):
+    '''returns sqrt(ϵ₀)(E_x,E_y,E_z) in units of sqrt(J/m³)'''
+
     material(n_in,n_out)
-    (r0_per_λ0,n,V)=get_neff(rmin=0,rmax=int(np.ceil(r0/λ0)),N=1000,r0_over_λ0=r0/λ0)
+    (r0_per_λ0,n,V)=get_neff(rmin=0,rmax=int(np.ceil(r0/λ0))+1,N=1000,r0_over_λ0=r0/λ0,neff_fig=neff_fig)
 
     r=np.sqrt(x**2+y**2)
     φ=np.arctan2(y,x)
@@ -143,12 +176,15 @@ def get_E(x,y,z,λ0,r0,n_in=1.45,n_out=1):
     Ez=np.where(r/r0<1,
                 (np.sqrt(2)/n1)*V[0]*jv(1,k0_r*κ1_per_k0)*np.exp(1j*(φ+kz_z)),
                 (np.sqrt(2)/n2)*V[2]*hv(1,k0_r*κ2_per_k0)*np.exp(1j*(φ+kz_z)))
+    
+    Eφ=1j/np.sqrt(2)*(Ep*np.exp(1j*(φ))-Em*np.exp(-1j*(φ)))
 
-    return ((Ep+Em)/np.sqrt(2),1j*(Ep-Em)/np.sqrt(2),Ez)
+    return ((Ep+Em)/np.sqrt(2),1j*(Ep-Em)/np.sqrt(2),Ez,Eφ)
 
 def get_H(x,y,z,λ0,r0,n_in=1.45,n_out=1):
+    '''returns sqrt(μ₀)(H_x,H_y,H_z) in units of sqrt(J/m³)'''
     material(n_in,n_out)
-    (r0_per_λ0,n,V)=get_neff(rmin=0,rmax=int(np.ceil(r0/λ0)),N=1000,r0_over_λ0=r0/λ0)
+    (r0_per_λ0,n,V)=get_neff(rmin=0,rmax=int(np.ceil(r0/λ0))+1,N=1000,r0_over_λ0=r0/λ0)
 
     r=np.sqrt(x**2+y**2)
     φ=np.arctan2(y,x)
@@ -166,8 +202,9 @@ def get_H(x,y,z,λ0,r0,n_in=1.45,n_out=1):
     Hz=np.where(r/r0<1,
                 np.sqrt(2)*V[1]*jv(1,k0_r*κ1_per_k0)*np.exp(1j*(φ+kz_z)),
                 np.sqrt(2)*V[3]*hv(1,k0_r*κ2_per_k0)*np.exp(1j*(φ+kz_z)))
+    Hφ=1j/np.sqrt(2)*(Hp*np.exp(1j*(φ))-Hm*np.exp(-1j*(φ)))
 
-    return ((Hp+Hm)/np.sqrt(2),1j*(Hp-Hm)/np.sqrt(2),Hz)
+    return ((Hp+Hm)/np.sqrt(2),1j*(Hp-Hm)/np.sqrt(2),Hz,Hφ)
 
 # E and H fields
 def E(V,n,r0_per_λ0,x_per_r0,y_per_r0,z_per_r0):
