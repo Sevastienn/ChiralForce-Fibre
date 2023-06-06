@@ -133,8 +133,7 @@ def get_neff(rmin=0,rmax=2,N=1000,neff_fig=False,r0_over_λ0=None,ℓ=1):
         return (r0_per_λ0,n,V)
     else:
         idx=int(np.argwhere(r0_per_λ0==find_nearest(r0_per_λ0,r0_over_λ0)))
-
-        # return (r0_per_λ0[idx],n[idx],V[idx])
+        return (r0_per_λ0[idx],n[idx],V[idx])
 
         # a=np.zeros(4)
         # eM=np.zeros_like(M[idx])
@@ -164,17 +163,17 @@ def get_neff(rmin=0,rmax=2,N=1000,neff_fig=False,r0_over_λ0=None,ℓ=1):
         # # print(np.inner(np.conj(M[idx,:,1]),M[idx,:,1]))
         # # print(np.inner(np.conj(M[idx,:,2]),M[idx,:,2]))
         # # print(np.inner(np.conj(M[idx,:,3]),M[idx,:,3]))
-
-        a=np.zeros(4)
-        eM=np.zeros_like(M[idx])
-        for i in range(4):
-            a[i]=np.sqrt(np.inner(np.conj(M[idx,i,:]),M[idx,i,:]))
-            eM[i,:]=M[idx,i,:]/a[i]
-        (w,v)=np.linalg.eig(eM)
-        argus=np.argmin(np.abs(w))
-        W=w[argus]
-        V=v[:,argus]
-        return (r0_per_λ0[idx],n[idx],V)
+#  Correction
+        # a=np.zeros(4)
+        # eM=np.zeros_like(M[idx])
+        # for i in range(4):
+        #     a[i]=np.sqrt(np.inner(np.conj(M[idx,i,:]),M[idx,i,:]))
+        #     eM[i,:]=M[idx,i,:]/a[i]
+        # (w,v)=np.linalg.eig(eM)
+        # argus=np.argmin(np.abs(w))
+        # W=w[argus]
+        # V=v[:,argus]
+        # return (r0_per_λ0[idx],n[idx],V)
 
 def get_E(x,y,z,λ0,r0,n_in=1.45,n_out=1,neff_fig=False,ℓ=1,times_ϵ=False):
     '''returns sqrt(ϵ₀)(E_x,E_y,E_z) in units of sqrt(J/m³)'''
