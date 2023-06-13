@@ -211,7 +211,7 @@ def E(x,y,z,λ0,r0,R,L,n_in=1.45,n_out=1,ℓ=1,times_ϵ=False):
 def H(x,y,z,λ0,r0,R,L,n_in=1.45,n_out=1,ℓ=1):
     pH=get_H(x,y,z,λ0,r0,n_in=n_in,n_out=n_out,ℓ=ℓ)
     mH=get_H(x,y,z,λ0,r0,n_in=n_in,n_out=n_out,ℓ=-ℓ)
-    return (1j*(R*pH[0]+L*mH[0])/np.sqrt(2),1j*(R*pH[1]+L*mH[1])/np.sqrt(2),1j*(R*pH[2]+L*mH[2])/np.sqrt(2),1j*(R*pH[3]+L*mH[3])/np.sqrt(2))
+    return ((R*pH[0]+L*mH[0])/np.sqrt(2),(R*pH[1]+L*mH[1])/np.sqrt(2),(R*pH[2]+L*mH[2])/np.sqrt(2),(R*pH[3]+L*mH[3])/np.sqrt(2))
 
 def get_H(x,y,z,λ0,r0,n_in=1.45,n_out=1,neff_fig=False,ℓ=1):
     '''returns sqrt(ϵ₀)(E_x,E_y,E_z) in units of sqrt(J/m³)'''
