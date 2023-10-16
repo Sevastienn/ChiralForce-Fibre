@@ -4,7 +4,7 @@ from scipy import signal
 from scipy.special import jv, hankel1 as hv,jvp, h1vp as hvp, jn_zeros
 from scipy.constants import hbar,c as c0, epsilon_0 as ϵ0, mu_0 as μ0
 from tqdm.notebook import tqdm
-import tikzplotlib as tpl
+# import tikzplotlib as tpl
 import itertools 
 from scipy.ndimage import gaussian_filter1d
 
@@ -322,7 +322,8 @@ def plt_modes(r0,λ0,k0r0min,k0r0max,res=500,pdfs=False,rescale=False,l_modes=3,
     plt.grid(color='#bfbfbf',linestyle='-')#rgb(191, 191, 191)    
     plt.legend()
     if pdfs:
-        tpl.save("figures/dispersion.tikz", flavor="latex")
+        plt.savefig("figures/dispersion.pdf",format='pdf', bbox_inches = "tight")
+        # tpl.save("figures/dispersion.tikz", flavor="latex")
     else: 
         plt.show()
     return None

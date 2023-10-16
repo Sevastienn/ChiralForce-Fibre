@@ -4,18 +4,23 @@
 This code requires python and packages listed in the file environment.yaml. These packages are namely:
 * astropy
 * jupyter
-* matplotlib
+* matplotlib (version 3.7)
 * numpy
-* python
+* python (version 3.10.10)
 * scipy
-* tikzplotlib
 * tqdm
 * texlive (UNIX) or miktex (Windows)
 
 ## Setting up the environment
-* Install [Microconda](https://docs.conda.io/projects/miniconda/en/latest/miniconda-install.html) and when finished open Anaconda Prompt
-* Run the following command in the directory containing yaml file replacing word environment with (unix/windows): 
-```
-conda env create -f environment.yaml
-```
-* Open and run force_basis.ipynb and particles.ipynb notebooks in your favourite IDE (VSCode, JupyterLab, …)
+* Install [Miniconda](https://docs.conda.io/projects/miniconda/en/latest/miniconda-install.html) (or equivalent) and when finished open Anaconda Prompt
+* Run the following command in the directory containing yaml file replacing word `environment` with (`unix`/`windows`) to install the required packages: 
+  ```
+   conda env create -f environment.yaml
+  ```
+  this creates an environment called `chiralforce`
+* Now open your favourite IDE (Visual Studio Code, JupyterLab, …) 
+  * When using anaconda navigator select the environment `chiralforce`
+  * When using Visual Studio Code:
+    * make sure to open the folder ChiralForce-main in the explorer 
+    * when running the notebook vscode will ask you which python kernel to use, choose chiralforce
+* Open and run force_basis.ipynb or particles.ipynb  

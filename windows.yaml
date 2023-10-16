@@ -10,5 +10,4 @@ dependencies:
   - python=3.10.10
   - scipy
   - tqdm
-  - tikzplotlib
   - miktex
