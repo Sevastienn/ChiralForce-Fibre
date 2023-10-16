@@ -23,5 +23,7 @@ This code requires python and packages listed in the file environment.yaml. Thes
     ![anaconda navigator](figures/anaconda.png)
   * When using Visual Studio Code:
     * make sure to open the folder ChiralForce-main in the explorer 
-    * when running the notebook vscode will ask you which python kernel to use, choose chiralforce
+    ![vscode explorer](figures/vsexplorer.png)
+    * choose the `chiralforce` kernel before running any notebook
+    ![vscode kernel](figures/vskernel.png)
 * Open and run force_basis.ipynb or particles.ipynb  
