@@ -20,6 +20,7 @@ This code requires python and packages listed in the file environment.yaml. Thes
   this creates an environment called `chiralforce`
 * Now open your favourite IDE (Visual Studio Code, JupyterLab, …) 
   * When using anaconda navigator select the environment `chiralforce`
+    ![anaconda navigator](figures/anaconda.png)
   * When using Visual Studio Code:
     * make sure to open the folder ChiralForce-main in the explorer 
     * when running the notebook vscode will ask you which python kernel to use, choose chiralforce
